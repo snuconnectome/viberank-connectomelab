@@ -56,4 +56,55 @@ export default defineSchema({
   })
     .index("by_username", ["username"])
     .index("by_github", ["githubUsername"]),
+
+  // Lab Mode Tables for Research Lab Usage Tracking
+  labSubmissions: defineTable({
+    researcherUsername: v.string(),
+    department: v.string(),
+    totalTokens: v.number(),
+    totalCost: v.number(),
+    inputTokens: v.number(),
+    outputTokens: v.number(),
+    cacheCreationTokens: v.number(),
+    cacheReadTokens: v.number(),
+    dateRange: v.object({
+      start: v.string(),
+      end: v.string(),
+    }),
+    modelsUsed: v.array(v.string()),
+    dailyBreakdown: v.array(
+      v.object({
+        date: v.string(),
+        inputTokens: v.number(),
+        outputTokens: v.number(),
+        cacheCreationTokens: v.number(),
+        cacheReadTokens: v.number(),
+        totalTokens: v.number(),
+        totalCost: v.number(),
+        modelsUsed: v.array(v.string()),
+      })
+    ),
+    submittedAt: v.number(),
+    verified: v.boolean(),
+    flaggedForReview: v.optional(v.boolean()),
+    flagReasons: v.optional(v.array(v.string())),
+  })
+    .index("by_researcher", ["researcherUsername"])
+    .index("by_department", ["department"])
+    .index("by_total_cost", ["totalCost"])
+    .index("by_submitted_at", ["submittedAt"]),
+
+  labResearchers: defineTable({
+    username: v.string(),
+    department: v.string(),
+    totalSubmissions: v.number(),
+    totalTokens: v.number(),
+    totalCost: v.number(),
+    firstSubmission: v.number(),
+    lastSubmission: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_username", ["username"])
+    .index("by_department", ["department"])
+    .index("by_total_cost", ["totalCost"]),
 });
