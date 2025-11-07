@@ -61,6 +61,8 @@ export default defineSchema({
   labSubmissions: defineTable({
     researcherUsername: v.string(),
     department: v.string(),
+    machineId: v.string(),
+    machineName: v.optional(v.string()),
     totalTokens: v.number(),
     totalCost: v.number(),
     inputTokens: v.number(),
@@ -92,11 +94,13 @@ export default defineSchema({
     .index("by_researcher", ["researcherUsername"])
     .index("by_department", ["department"])
     .index("by_total_cost", ["totalCost"])
-    .index("by_submitted_at", ["submittedAt"]),
+    .index("by_submitted_at", ["submittedAt"])
+    .index("by_researcher_machine", ["researcherUsername", "machineId"]),
 
   labResearchers: defineTable({
     username: v.string(),
     department: v.string(),
+    machines: v.array(v.string()),
     totalSubmissions: v.number(),
     totalTokens: v.number(),
     totalCost: v.number(),
