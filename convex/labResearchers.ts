@@ -85,26 +85,7 @@ export const updateResearcherStats = internalMutation({
     department: v.string(),
   },
   handler: async (ctx, args) => {
-    // Get the researcher's submission
-    const submission = await ctx.db
-      .query("labSubmissions")
-      .withIndex("by_researcher", (q) =>
-        q.eq("researcherUsername", args.username)
-      )
-      .first();
-
-    if (!submission) {
-      // No submission found - this shouldn't happen but handle gracefully
-      return { success: false, error: "No submission found" };
-    }
-
-    // Check if researcher profile exists
-    const existingResearcher = await ctx.db
-      .query("labResearchers")
-      .withIndex("by_username", (q) => q.eq("username", args.username))
-      .first();
-
-    // Get all submissions for this researcher to calculate total submissions
+    // Get all submissions for this researcher across all machines
     const allSubmissions = await ctx.db
       .query("labSubmissions")
       .withIndex("by_researcher", (q) =>
@@ -112,6 +93,19 @@ export const updateResearcherStats = internalMutation({
       )
       .collect();
 
+    if (allSubmissions.length === 0) {
+      // No submission found - this shouldn't happen but handle gracefully
+      return { success: false, error: "No submission found" };
+    }
+
+    // Extract unique machine IDs
+    const machines = Array.from(
+      new Set(allSubmissions.map((s) => s.machineId))
+    );
+
+    // Aggregate totals across all machines
+    const totalTokens = allSubmissions.reduce((sum, s) => sum + s.totalTokens, 0);
+    const totalCost = allSubmissions.reduce((sum, s) => sum + s.totalCost, 0);
     const totalSubmissions = allSubmissions.length;
 
     // Find earliest and latest submission times
@@ -119,13 +113,20 @@ export const updateResearcherStats = internalMutation({
     const firstSubmission = Math.min(...submissionTimes);
     const lastSubmission = Math.max(...submissionTimes);
 
+    // Check if researcher profile exists
+    const existingResearcher = await ctx.db
+      .query("labResearchers")
+      .withIndex("by_username", (q) => q.eq("username", args.username))
+      .first();
+
     if (existingResearcher) {
       // Update existing researcher profile
       await ctx.db.patch(existingResearcher._id, {
         department: args.department, // Allow department changes
+        machines,
         totalSubmissions,
-        totalTokens: submission.totalTokens,
-        totalCost: submission.totalCost,
+        totalTokens,
+        totalCost,
         firstSubmission,
         lastSubmission,
       });
@@ -140,9 +141,10 @@ export const updateResearcherStats = internalMutation({
       const researcherId = await ctx.db.insert("labResearchers", {
         username: args.username,
         department: args.department,
+        machines,
         totalSubmissions,
-        totalTokens: submission.totalTokens,
-        totalCost: submission.totalCost,
+        totalTokens,
+        totalCost,
         firstSubmission,
         lastSubmission,
         createdAt: Date.now(),

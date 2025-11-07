@@ -24,6 +24,8 @@ export const submit = mutation({
   args: {
     researcherUsername: v.string(),
     department: v.string(),
+    machineId: v.string(),
+    machineName: v.optional(v.string()),
     totalTokens: v.number(),
     totalCost: v.number(),
     inputTokens: v.number(),
@@ -76,11 +78,12 @@ export const submit = mutation({
     // Anomaly detection
     const anomalyCheck = detectAnomalies(args);
 
-    // Check for existing submission by this researcher
+    // Check for existing submission by this researcher on this machine
     const existing = await ctx.db
       .query("labSubmissions")
-      .withIndex("by_researcher", (q) =>
+      .withIndex("by_researcher_machine", (q) =>
         q.eq("researcherUsername", args.researcherUsername)
+         .eq("machineId", args.machineId)
       )
       .first();
 
@@ -113,6 +116,8 @@ export const submit = mutation({
       submissionId = await ctx.db.insert("labSubmissions", {
         researcherUsername: args.researcherUsername,
         department: args.department,
+        machineId: args.machineId,
+        machineName: args.machineName,
         totalTokens: args.totalTokens,
         totalCost: args.totalCost,
         inputTokens: args.inputTokens,
@@ -220,5 +225,57 @@ export const getRecent = query({
       .take(limit);
 
     return recent;
+  },
+});
+
+/**
+ * Get all submissions for a specific researcher and machine
+ */
+export const getByResearcherAndMachine = query({
+  args: {
+    username: v.string(),
+    machineId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const submission = await ctx.db
+      .query("labSubmissions")
+      .withIndex("by_researcher_machine", (q) =>
+        q.eq("researcherUsername", args.username)
+         .eq("machineId", args.machineId)
+      )
+      .first();
+
+    return submission;
+  },
+});
+
+/**
+ * Get all machines used by a specific researcher
+ */
+export const getMachinesByResearcher = query({
+  args: {
+    username: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const submissions = await ctx.db
+      .query("labSubmissions")
+      .withIndex("by_researcher", (q) =>
+        q.eq("researcherUsername", args.username)
+      )
+      .collect();
+
+    // Extract unique machine information
+    const machinesMap = new Map<string, { machineId: string; machineName?: string }>();
+
+    submissions.forEach((submission) => {
+      if (!machinesMap.has(submission.machineId)) {
+        machinesMap.set(submission.machineId, {
+          machineId: submission.machineId,
+          machineName: submission.machineName,
+        });
+      }
+    });
+
+    return Array.from(machinesMap.values());
   },
 });
