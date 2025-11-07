@@ -19,6 +19,30 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}🔬 Viberank Lab Mode Submission Tool${NC}"
 echo ""
 
+# Generate machine ID from hostname or environment variable
+generate_machine_id() {
+    # Use environment variable if set
+    if [ -n "$VIBERANK_MACHINE_ID" ]; then
+        echo "$VIBERANK_MACHINE_ID"
+        return
+    fi
+
+    # Get hostname
+    local hostname=$(hostname)
+
+    # If hostname is too short or generic, add unique suffix
+    if [ ${#hostname} -lt 5 ] || [[ "$hostname" =~ ^localhost|^ubuntu|^debian ]]; then
+        local suffix=$(date +%s | md5sum 2>/dev/null | head -c 6 || date +%s | shasum | head -c 6)
+        echo "${hostname}-${suffix}"
+    else
+        echo "$hostname"
+    fi
+}
+
+# Generate machine ID
+MACHINE_ID=$(generate_machine_id)
+MACHINE_NAME="${VIBERANK_MACHINE_NAME:-$MACHINE_ID}"
+
 # Check if ccusage is available
 if ! command -v npx &> /dev/null; then
     echo -e "${RED}Error: npx is not installed. Please install Node.js first.${NC}"
@@ -51,6 +75,8 @@ fi
 echo ""
 echo -e "Researcher: ${GREEN}$RESEARCHER_USERNAME${NC}"
 echo -e "Department: ${GREEN}$DEPARTMENT${NC}"
+echo -e "Machine ID: ${GREEN}$MACHINE_ID${NC}"
+echo -e "Machine Name: ${GREEN}$MACHINE_NAME${NC}"
 echo ""
 
 # Generate ccusage data
@@ -107,6 +133,8 @@ RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL" \
   -H "Content-Type: application/json" \
   -H "X-Researcher-Username: $RESEARCHER_USERNAME" \
   -H "X-Researcher-Department: $DEPARTMENT" \
+  -H "X-Machine-Id: $MACHINE_ID" \
+  -H "X-Machine-Name: $MACHINE_NAME" \
   -d @lab-data.json)
 
 # Extract HTTP status code and body

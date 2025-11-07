@@ -23,13 +23,15 @@ export async function POST(request: NextRequest) {
     // Get researcher authentication headers
     const researcherUsername = request.headers.get("X-Researcher-Username");
     const department = request.headers.get("X-Researcher-Department");
+    const machineId = request.headers.get("X-Machine-Id");
+    const machineName = request.headers.get("X-Machine-Name");
 
     // Validate required headers
-    if (!researcherUsername || !department) {
+    if (!researcherUsername || !department || !machineId) {
       return NextResponse.json(
         {
           error:
-            "Missing required headers. Please provide X-Researcher-Username and X-Researcher-Department.",
+            "Missing required headers. Please provide X-Researcher-Username, X-Researcher-Department, and X-Machine-Id.",
         },
         { status: 400 }
       );
@@ -39,6 +41,8 @@ export async function POST(request: NextRequest) {
     console.log("Lab submission request received:", {
       researcherUsername,
       department,
+      machineId,
+      machineName,
       contentType: request.headers.get("content-type"),
       contentLength: request.headers.get("content-length"),
       url: request.url,
@@ -182,6 +186,8 @@ export async function POST(request: NextRequest) {
       const submissionPromise = convex.mutation(api.labSubmissions.submit, {
         researcherUsername,
         department,
+        machineId,
+        machineName: machineName || undefined,
         totalTokens: ccData.totals.totalTokens,
         totalCost: ccData.totals.totalCost,
         inputTokens: ccData.totals.inputTokens,
@@ -298,7 +304,7 @@ export async function OPTIONS() {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers":
-        "Content-Type, X-Researcher-Username, X-Researcher-Department",
+        "Content-Type, X-Researcher-Username, X-Researcher-Department, X-Machine-Id, X-Machine-Name",
     },
   });
 }
