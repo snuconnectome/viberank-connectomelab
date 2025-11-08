@@ -8,6 +8,7 @@ import { api } from "../../convex/_generated/api";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ShareCard from "./ShareCard";
+import UserTrajectoryModal from "./UserTrajectoryModal";
 import { formatNumber, formatCurrency, getGitHubAvatarUrl } from "@/lib/utils";
 
 type SortBy = "cost" | "tokens";
@@ -15,6 +16,7 @@ type SortBy = "cost" | "tokens";
 export default function Leaderboard() {
   const [sortBy, setSortBy] = useState<SortBy>("cost");
   const [showShareCard, setShowShareCard] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
@@ -265,7 +267,8 @@ export default function Leaderboard() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.3) }}
-                        className={`group relative border-b border-border/50 transition-all hover:bg-card/50 ${
+                        onClick={() => setSelectedUser(submission.githubUsername || submission.username)}
+                        className={`group relative border-b border-border/50 transition-all hover:bg-card/50 cursor-pointer ${
                           isCurrentUser ? "bg-accent/5 hover:bg-accent/10" : ""
                         }`}
                       >
@@ -388,9 +391,10 @@ export default function Leaderboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                     whileHover={{ scale: 1.01 }}
-                    className={`p-4 rounded-xl border transition-all shadow-sm ${
-                      isCurrentUser 
-                        ? "border-accent/30 bg-accent/5 shadow-accent/10" 
+                    onClick={() => setSelectedUser(submission.githubUsername || submission.username)}
+                    className={`p-4 rounded-xl border transition-all shadow-sm cursor-pointer ${
+                      isCurrentUser
+                        ? "border-accent/30 bg-accent/5 shadow-accent/10"
                         : "border-border/50 bg-card/30 hover:bg-card/50 hover:shadow-md"
                     }`}
                   >
@@ -504,6 +508,13 @@ export default function Leaderboard() {
                 </div>
               </motion.div>
             )}
+
+            {/* User Trajectory Modal */}
+            <UserTrajectoryModal
+              username={selectedUser || ""}
+              isOpen={!!selectedUser}
+              onClose={() => setSelectedUser(null)}
+            />
           </>
         ) : (
           <div className="text-center py-20">
