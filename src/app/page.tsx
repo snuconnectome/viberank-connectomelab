@@ -29,7 +29,7 @@ export default function Home() {
   const claimAndMergeMutation = useMutation(api.submissions.claimAndMergeSubmissions);
 
   const copyCommand = () => {
-    navigator.clipboard.writeText("npx viberank");
+    navigator.clipboard.writeText("npx ccusage --json > cc.json");
     setCopiedToClipboard(true);
     setTimeout(() => setCopiedToClipboard(false), 2000);
   };
@@ -219,51 +219,45 @@ export default function Home() {
             </div>
             
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-8rem)]">
-              {/* CLI Option */}
-              <div className="mb-6 p-6 bg-card/50 rounded-xl border border-border/50">
+              {/* Step 1: Generate cc.json */}
+              <div className="mb-6">
                 <h4 className="font-medium mb-3 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  Option 1: Terminal (Recommended)
+                  Step 1: Generate your usage file
                 </h4>
-                <p className="text-sm text-muted mb-4">No installation needed - npx handles everything!</p>
-                <div className="flex items-center gap-3 bg-background rounded-lg p-3 border border-border/50 mb-3">
-                  <code className="text-sm font-mono text-accent">npx viberank</code>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={copyCommand}
-                    className="ml-auto p-1.5 hover:bg-accent/10 rounded transition-colors"
-                    title="Copy to clipboard"
-                  >
-                    {copiedToClipboard ? (
-                      <svg className="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                    )}
-                  </motion.button>
-                </div>
-                <details className="text-xs text-muted">
-                  <summary className="cursor-pointer hover:text-foreground transition-colors">Having issues?</summary>
-                  <div className="mt-2 space-y-1 pl-3">
-                    <p>• Try: <code className="text-accent">npx viberank@latest</code></p>
-                    <p>• Clear cache: <code className="text-accent">npx clear-npx-cache</code></p>
-                    <p>• Set git username: <code className="text-accent">git config --global user.name "YourGitHubUsername"</code></p>
-                    <p>• Requires Node.js 14+</p>
+                <p className="text-sm text-muted mb-4">Run this command in your terminal to generate your Claude usage statistics:</p>
+                <div className="bg-card/50 rounded-xl border border-border/50 p-4">
+                  <div className="flex items-center gap-3 bg-background rounded-lg p-3 border border-border/50 mb-3">
+                    <code className="text-sm font-mono text-accent">npx ccusage --json &gt; cc.json</code>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={copyCommand}
+                      className="ml-auto p-1.5 hover:bg-accent/10 rounded transition-colors"
+                      title="Copy to clipboard"
+                    >
+                      {copiedToClipboard ? (
+                        <svg className="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      )}
+                    </motion.button>
                   </div>
-                </details>
+                  <p className="text-xs text-muted">💡 Tip: Use <code className="text-accent">npx viberank</code> instead for automatic submission (no upload needed!)</p>
+                </div>
               </div>
 
-              {/* Manual Upload Option */}
+              {/* Step 2: Upload */}
               <div>
                 <h4 className="font-medium mb-3 flex items-center gap-2">
                   <Upload className="w-4 h-4" />
-                  Option 2: Manual Upload
+                  Step 2: Upload the generated file
                 </h4>
                 <FileUpload onSuccess={() => setShowUploadModal(false)} />
               </div>
