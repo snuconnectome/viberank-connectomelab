@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Upload, Github, Sparkles, TrendingUp, Menu, X, Shield, BookOpen } from "lucide-react";
+import { Trophy, Upload, Github, TrendingUp, Menu, X, Shield } from "lucide-react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -32,7 +32,6 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
   }, []);
 
   const navItems = [
-    { name: "Blog", href: "/blog", icon: BookOpen },
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Shield }] : []),
   ];
 
@@ -54,8 +53,10 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
         >
           <div className="flex items-center gap-1">
             {/* Logo */}
-            <Link
-              href="/"
+            <a
+              href="https://www.connectomelab.com/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-accent/10 transition-colors"
             >
               <div className="relative">
@@ -71,7 +72,7 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
                 </div>
               </div>
               <span className="font-semibold">Connectome Lab</span>
-            </Link>
+            </a>
 
             {/* Nav Items */}
             {navItems.length > 0 && (
@@ -141,20 +142,6 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
 
               {/* Secondary actions */}
               <div className="flex items-center gap-1 border-l border-border/50 pl-2">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={onUpdatesClick}
-                  className="p-2 rounded-full hover:bg-accent/10 transition-colors relative"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <motion.span
-                    className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-accent rounded-full"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                </motion.button>
-
                 <motion.a
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -174,7 +161,7 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
       {/* Mobile Navigation */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#1a1918] backdrop-blur-xl border-b border-border/50">
         <div className="flex items-center justify-between px-4 h-14">
-          <Link href="/" className="flex items-center gap-2">
+          <a href="https://www.connectomelab.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
             <Image
               src="/connectome-logo.svg"
               alt="Connectome Lab Logo"
@@ -183,7 +170,7 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
               className="text-accent"
             />
             <span className="font-semibold">Connectome Lab</span>
-          </Link>
+          </a>
 
           <div className="flex items-center gap-2">
             {/* Submit Button */}
@@ -235,18 +222,9 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
                     </Link>
                   );
                 })}
-                
+
                 {/* Secondary Actions */}
                 <div className="flex items-center gap-3 px-4 py-2">
-                  <button
-                    onClick={() => {
-                      onUpdatesClick();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="p-2 rounded-lg hover:bg-accent/10 transition-colors"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                  </button>
                   <a
                     href="https://github.com/sculptdotfun/viberank"
                     target="_blank"
