@@ -14,7 +14,7 @@ export const getUserTrajectory = query({
     if (!submission) return null;
 
     // Transform daily data for chart consumption
-    const trajectory = submission.ccData.daily.map(day => ({
+    const trajectory = submission.dailyBreakdown.map(day => ({
       date: day.date,
       inputTokens: day.inputTokens,
       outputTokens: day.outputTokens,
@@ -25,11 +25,11 @@ export const getUserTrajectory = query({
     }));
 
     // Calculate summary statistics
-    const totalDays = submission.ccData.daily.length;
-    const averageDailyTokens = Math.round(submission.ccData.totals.totalTokens / totalDays);
-    const averageDailyCost = submission.ccData.totals.totalCost / totalDays;
+    const totalDays = submission.dailyBreakdown.length;
+    const averageDailyTokens = Math.round(submission.totalTokens / totalDays);
+    const averageDailyCost = submission.totalCost / totalDays;
 
-    const peakDay = submission.ccData.daily.reduce((max, day) =>
+    const peakDay = submission.dailyBreakdown.reduce((max, day) =>
       day.totalTokens > max.totalTokens ? day : max
     );
 
@@ -42,10 +42,17 @@ export const getUserTrajectory = query({
       summary: {
         totalDays,
         dateRange: {
-          start: submission.ccData.daily[0]?.date,
-          end: submission.ccData.daily[totalDays - 1]?.date
+          start: submission.dailyBreakdown[0]?.date,
+          end: submission.dailyBreakdown[totalDays - 1]?.date
         },
-        totals: submission.ccData.totals,
+        totals: {
+          totalTokens: submission.totalTokens,
+          totalCost: submission.totalCost,
+          inputTokens: submission.inputTokens,
+          outputTokens: submission.outputTokens,
+          cacheCreationTokens: submission.cacheCreationTokens,
+          cacheReadTokens: submission.cacheReadTokens
+        },
         averageDaily: {
           tokens: averageDailyTokens,
           cost: averageDailyCost
