@@ -396,35 +396,26 @@ export const getLeaderboard = query({
     sortBy: v.optional(v.union(v.literal("cost"), v.literal("tokens"))),
     page: v.optional(v.number()), // Page number (0-based)
     pageSize: v.optional(v.number()), // Items per page
-    includeFlagged: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const sortBy = args.sortBy || "cost";
     const page = args.page || 0;
     const pageSize = Math.min(args.pageSize || 25, 50); // Max 50 per page
     const offset = page * pageSize;
-    const includeFlagged = args.includeFlagged || false;
-    
+
     // Build the query based on sort preference
-    let query = sortBy === "cost" 
+    let query = sortBy === "cost"
       ? ctx.db.query("submissions").withIndex("by_total_cost").order("desc")
       : ctx.db.query("submissions").withIndex("by_total_tokens").order("desc");
-    
+
     // Fetch enough for current page + check for more
-    // Need to skip to offset then take pageSize + buffer for filtering
-    const bufferMultiplier = includeFlagged ? 1 : 2;
-    const fetchLimit = Math.min(offset + (pageSize * bufferMultiplier) + 1, 200);
+    const fetchLimit = Math.min(offset + pageSize + 1, 200);
     let allResults = await query.take(fetchLimit);
-    
-    // Filter out flagged submissions if needed
-    if (!includeFlagged) {
-      allResults = allResults.filter(sub => !sub.flaggedForReview);
-    }
-    
+
     // Apply pagination
     const items = allResults.slice(offset, offset + pageSize);
     const hasMore = allResults.length > offset + pageSize;
-    
+
     return {
       items,
       page,
@@ -446,36 +437,32 @@ export const getLeaderboardByDateRange = query({
     sortBy: v.optional(v.union(v.literal("cost"), v.literal("tokens"))),
     limit: v.optional(v.number()),
     cursor: v.optional(v.id("submissions")),
-    includeFlagged: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const limit = Math.min(args.limit || 50, 100);
-    const includeFlagged = args.includeFlagged || false;
     const sortBy = args.sortBy || "cost";
-    
+
     // NOTE: Date range filtering requires computing totals from dailyBreakdown
     // This is inherently expensive. Consider:
     // 1. Pre-computing weekly/monthly aggregates
     // 2. Storing denormalized date-range totals
     // 3. Using a separate analytics table
-    
+
     let query = ctx.db.query("submissions");
-    
+
     // Apply cursor if provided
     if (args.cursor) {
       query = query.filter(q => q.gt(q.field("_id"), args.cursor));
     }
-    
+
     // Fetch a batch to process
     const batchSize = 100;
     const batch = await query.take(batchSize);
-    
+
     // Process and filter submissions
     const processedItems = [];
-    
+
     for (const submission of batch) {
-      // Skip flagged if not included
-      if (!includeFlagged && submission.flaggedForReview) continue;
       
       // Filter daily breakdown by date range
       const filteredDays = submission.dailyBreakdown.filter(day => {
