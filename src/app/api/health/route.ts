@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       setTimeout(() => reject(new Error("Convex health check timed out")), 5000)
     );
     
-    const queryPromise = convex.query(api.submissions.getLeaderboard, { limit: 1 });
+    const queryPromise = convex.query(api.submissions.getLeaderboard, { pageSize: 1 });
     
     await Promise.race([queryPromise, timeoutPromise]);
     

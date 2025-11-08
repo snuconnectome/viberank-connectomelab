@@ -9,6 +9,10 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as labLeaderboard from "../labLeaderboard.js";
+import type * as labResearchers from "../labResearchers.js";
+import type * as labSubmissions from "../labSubmissions.js";
+import type * as lib_validation from "../lib/validation.js";
 import type * as rateLimiter from "../rateLimiter.js";
 import type * as stats from "../stats.js";
 import type * as submissions from "../submissions.js";
@@ -29,6 +33,10 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  labLeaderboard: typeof labLeaderboard;
+  labResearchers: typeof labResearchers;
+  labSubmissions: typeof labSubmissions;
+  "lib/validation": typeof lib_validation;
   rateLimiter: typeof rateLimiter;
   stats: typeof stats;
   submissions: typeof submissions;
