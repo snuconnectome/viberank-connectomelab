@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Upload, Github, Sparkles, TrendingUp, Menu, X, Shield, BookOpen } from "lucide-react";
+import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -60,10 +61,16 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
               <div className="relative">
                 <div className="absolute inset-0 bg-accent/20 rounded-lg blur-xl" />
                 <div className="relative">
-                  <Trophy className="w-5 h-5 text-accent" />
+                  <Image
+                    src="/connectome-logo.svg"
+                    alt="Connectome Lab Logo"
+                    width={24}
+                    height={24}
+                    className="text-accent"
+                  />
                 </div>
               </div>
-              <span className="font-semibold">viberank</span>
+              <span className="font-semibold">Connectome Lab</span>
             </Link>
 
             {/* Nav Items */}
@@ -168,8 +175,14 @@ export default function NavBar({ onUploadClick, onUpdatesClick }: NavBarProps) {
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#1a1918] backdrop-blur-xl border-b border-border/50">
         <div className="flex items-center justify-between px-4 h-14">
           <Link href="/" className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-accent" />
-            <span className="font-semibold">viberank</span>
+            <Image
+              src="/connectome-logo.svg"
+              alt="Connectome Lab Logo"
+              width={20}
+              height={20}
+              className="text-accent"
+            />
+            <span className="font-semibold">Connectome Lab</span>
           </Link>
 
           <div className="flex items-center gap-2">

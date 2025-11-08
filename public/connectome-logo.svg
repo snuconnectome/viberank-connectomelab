@@ -1,0 +1,35 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- DNA Helix and Brain Profile Logo -->
+  <g transform="translate(100, 100)">
+    <!-- Head Silhouette Outline -->
+    <path d="M 150 750 Q 100 650, 100 500 Q 100 300, 200 150 Q 300 50, 450 100 Q 550 130, 600 200 Q 650 270, 670 400 Q 680 500, 650 600 Q 620 700, 550 750 Q 480 800, 400 800 Q 300 800, 200 750 Z"
+          stroke="currentColor"
+          stroke-width="50"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+
+    <!-- DNA Double Helix Inside Head -->
+    <!-- Left Strand -->
+    <path d="M 350 200 Q 320 300, 340 400 Q 360 500, 340 600 Q 320 680, 350 720"
+          stroke="currentColor"
+          stroke-width="35"
+          fill="none"
+          stroke-linecap="round"/>
+
+    <!-- Right Strand -->
+    <path d="M 450 200 Q 480 300, 460 400 Q 440 500, 460 600 Q 480 680, 450 720"
+          stroke="currentColor"
+          stroke-width="35"
+          fill="none"
+          stroke-linecap="round"/>
+
+    <!-- Horizontal Connectors (Base Pairs) -->
+    <line x1="355" y1="240" x2="445" y2="240" stroke="currentColor" stroke-width="25"/>
+    <line x1="345" y1="320" x2="465" y2="320" stroke="currentColor" stroke-width="25"/>
+    <line x1="350" y1="400" x2="450" y2="400" stroke="currentColor" stroke-width="25"/>
+    <line x1="345" y1="480" x2="465" y2="480" stroke="currentColor" stroke-width="25"/>
+    <line x1="355" y1="560" x2="445" y2="560" stroke="currentColor" stroke-width="25"/>
+    <line x1="345" y1="640" x2="465" y2="640" stroke="currentColor" stroke-width="25"/>
+  </g>
+</svg>

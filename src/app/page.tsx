@@ -11,6 +11,7 @@ import UpdatesModal from "@/components/UpdatesModal";
 import NavBar from "@/components/NavBar";
 import { formatNumber, formatLargeNumber } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function Home() {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -115,6 +116,27 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="text-center mb-8 sm:mb-12"
             >
+              {/* Connectome Lab Logo */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex justify-center mb-6"
+              >
+                <div className="relative">
+                  <div className="absolute inset-0 bg-accent/20 rounded-full blur-2xl" />
+                  <div className="relative">
+                    <Image
+                      src="/connectome-logo.svg"
+                      alt="Connectome Lab"
+                      width={80}
+                      height={80}
+                      className="text-accent"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Claude Code Leaderboard
               </h2>
