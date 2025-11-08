@@ -192,7 +192,7 @@ export const submit = mutation({
       throw validationError;
     }
     
-    // Check for existing submission with overlapping date range and same source
+    // Check for existing submission with the same source (always merge regardless of date range)
     let existingSubmissions;
     try {
       existingSubmissions = await ctx.db
@@ -207,7 +207,7 @@ export const submit = mutation({
       });
       throw new Error("Failed to query existing submissions. Please try again.");
     }
-    
+
     let existingSubmission = null;
     for (const submission of existingSubmissions) {
       // Only consider submissions from the same source
@@ -216,18 +216,11 @@ export const submit = mutation({
       if (existingSource !== source) {
         continue;
       }
-      
-      // Check if date ranges overlap
-      const existingStart = submission.dateRange.start;
-      const existingEnd = submission.dateRange.end;
-      const newStart = dateRange.start;
-      const newEnd = dateRange.end;
-      
-      // Date ranges overlap if one starts before the other ends
-      if (existingStart <= newEnd && newStart <= existingEnd) {
-        existingSubmission = submission;
-        break;
-      }
+
+      // Always merge submissions from the same user + source, regardless of date range
+      // This allows merging data from multiple computers/submissions
+      existingSubmission = submission;
+      break;
     }
     
     let submissionId: any;
