@@ -113,71 +113,46 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        {/* Instructions */}
-        <div className="mb-6 space-y-4">
-          <div>
-            <h4 className="font-medium mb-2">Step 1: Generate your usage file</h4>
-            <p className="text-sm text-muted mb-3">
-              Run this command in your terminal to generate your Claude usage statistics:
-            </p>
-            <div className="bg-card rounded-lg p-3 border border-border/50 mb-2">
-              <code className="text-sm font-mono text-accent">
-                npx ccusage --json &gt; cc.json
-              </code>
+        {/* Verification status notice */}
+        {session ? (
+          <div className="flex items-center gap-2 p-3 bg-accent/10 rounded-lg border border-accent/20 mb-4">
+            <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
+            <div className="text-sm">
+              <span className="font-medium">Signed in as {session.user.username || session.user?.name}</span>
+              <span className="text-muted"> - Your submission will be verified</span>
             </div>
-            <p className="text-xs text-muted">
-              💡 Tip: Use <code className="text-accent">npx viberank</code> instead for automatic submission (no upload needed!)
-            </p>
           </div>
-
-          <div>
-            <h4 className="font-medium mb-2">Step 2: Upload the generated file</h4>
-            <p className="text-sm text-muted">
-              Drag and drop your cc.json file below, or click to browse
-            </p>
-          </div>
-
-          {/* Verification status notice */}
-          {session ? (
-            <div className="flex items-center gap-2 p-3 bg-accent/10 rounded-lg border border-accent/20">
-              <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
+        ) : (
+          <div className="flex items-center justify-between p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20 mb-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-yellow-500 flex-shrink-0" />
               <div className="text-sm">
-                <span className="font-medium">Signed in as {session.user.username || session.user?.name}</span>
-                <span className="text-muted"> - Your submission will be verified</span>
+                <span className="font-medium">Submitting without verification</span>
+                <span className="text-muted"> - Sign in to get verified badge</span>
               </div>
             </div>
-          ) : (
-            <div className="flex items-center justify-between p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                <div className="text-sm">
-                  <span className="font-medium">Submitting without verification</span>
-                  <span className="text-muted"> - Sign in to get verified badge</span>
-                </div>
-              </div>
-              <button
-                onClick={() => signIn("github")}
-                className="text-sm px-3 py-1 rounded-md bg-yellow-500/20 hover:bg-yellow-500/30 transition-colors flex items-center gap-1.5"
-              >
-                <Github className="w-3.5 h-3.5" />
-                Sign in
-              </button>
-            </div>
-          )}
-        </div>
+            <button
+              onClick={() => signIn("github")}
+              className="text-sm px-3 py-1 rounded-md bg-yellow-500/20 hover:bg-yellow-500/30 transition-colors flex items-center gap-1.5"
+            >
+              <Github className="w-3.5 h-3.5" />
+              Sign in
+            </button>
+          </div>
+        )}
 
         {/* File Upload */}
         <div
           {...getRootProps()}
-          className={`border border-dashed rounded-md p-12 text-center cursor-pointer transition-all ${
+          className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all ${
             isDragActive
               ? "border-accent bg-accent/5"
-              : "border-border hover:border-muted"
+              : "border-border hover:border-accent/50"
           }`}
         >
           <input {...getInputProps()} />
-          <FileJson className="w-10 h-10 mx-auto mb-4 text-muted" />
-          <p className="text-sm text-foreground mb-1">
+          <FileJson className="w-12 h-12 mx-auto mb-4 text-muted" />
+          <p className="text-base text-foreground mb-1 font-medium">
             {isDragActive
               ? "Drop your cc.json file here"
               : "Drag and drop your cc.json file"}
