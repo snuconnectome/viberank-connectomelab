@@ -227,9 +227,9 @@ export default function Home() {
                   </svg>
                   Step 1: Generate your usage file
                 </h4>
-                <p className="text-sm text-muted mb-4">Run this command in your terminal to generate your Claude usage statistics:</p>
+                <p className="text-sm text-muted mb-4">Run this command in your terminal to create cc.json file (this only creates the file locally):</p>
                 <div className="bg-card/50 rounded-xl border border-border/50 p-4">
-                  <div className="flex items-center gap-3 bg-background rounded-lg p-3 border border-border/50 mb-3">
+                  <div className="flex items-center gap-3 bg-background rounded-lg p-3 border border-border/50">
                     <code className="text-sm font-mono text-accent">npx ccusage --json &gt; cc.json</code>
                     <motion.button
                       whileHover={{ scale: 1.1 }}
@@ -249,7 +249,6 @@ export default function Home() {
                       )}
                     </motion.button>
                   </div>
-                  <p className="text-xs text-muted">💡 Tip: Use <code className="text-accent">npx viberank</code> instead for automatic submission (no upload needed!)</p>
                 </div>
               </div>
 
@@ -257,8 +256,9 @@ export default function Home() {
               <div>
                 <h4 className="font-medium mb-3 flex items-center gap-2">
                   <Upload className="w-4 h-4" />
-                  Step 2: Upload the generated file
+                  Step 2: Upload to submit (required)
                 </h4>
+                <p className="text-sm text-muted mb-4">Upload the cc.json file you created in Step 1 to complete your submission:</p>
                 <FileUpload onSuccess={() => setShowUploadModal(false)} />
               </div>
             </div>
