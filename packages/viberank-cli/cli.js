@@ -141,19 +141,21 @@ async function main() {
   }
 
   // Submit to Viberank with retry logic
-  const submitSpinner = ora('Submitting to Viberank...').start();
-  
+  // Use environment variable for API URL, defaulting to dgx-spark deployment
+  const API_URL = process.env.VIBERANK_API_URL || 'https://unfederatively-mothy-lyda.ngrok-free.dev/api/submit';
+  const submitSpinner = ora(`Submitting to Connectome Lab (${API_URL})...`).start();
+
   let attempt = 0;
   const maxAttempts = 3;
   const retryDelay = 5000; // 5 seconds
-  
+
   while (attempt < maxAttempts) {
     attempt++;
-    
+
     try {
       const ccData = JSON.parse(fs.readFileSync(ccJsonPath, 'utf8'));
-      
-      const response = await fetch('https://www.viberank.app/api/submit', {
+
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,8 +223,10 @@ async function main() {
       const result = await response.json();
 
       if (result.success) {
-        submitSpinner.succeed('Successfully submitted to Viberank!');
-        console.log(`\nView your profile at: ${chalk.green(result.profileUrl)}\n`);
+        submitSpinner.succeed('Successfully submitted to Connectome Lab!');
+        const baseUrl = API_URL.replace('/api/submit', '');
+        const profileUrl = result.profileUrl || `${baseUrl}/profile/${githubUser}`;
+        console.log(`\nView leaderboard at: ${chalk.green(baseUrl)}\n`);
         break; // Success, exit the retry loop
       } else {
         submitSpinner.fail('Failed to submit to Viberank');
