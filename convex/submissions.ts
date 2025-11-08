@@ -45,23 +45,7 @@ export const submit = mutation({
   },
   handler: async (ctx, args) => {
     const { username, githubUsername, githubName, githubAvatar, source, verified, ccData } = args;
-    
-    // Apply rate limiting using Convex rate limiter component
-    try {
-      await rateLimiter.limit(ctx, "submitData", { 
-        key: username, // Rate limit per user
-        throws: true // Automatically throw on rate limit
-      });
-    } catch (error: any) {
-      // Check if it's a rate limit error
-      if (error?.data?.kind === "RateLimitError") {
-        const retryAfter = error.data.retryAfter;
-        const waitSeconds = Math.ceil((retryAfter - Date.now()) / 1000);
-        throw new Error(`Rate limit exceeded. Please wait ${waitSeconds} seconds before submitting again.`);
-      }
-      throw error;
-    }
-    
+
     // Log submission attempt for debugging
     console.log("Submission attempt:", {
       username,
