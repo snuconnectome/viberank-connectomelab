@@ -161,9 +161,10 @@ export const submit = mutation({
     }
     
     // Check for future dates (allow today)
+    // Use date string comparison to avoid timezone issues
     const today = new Date();
-    today.setHours(23, 59, 59, 999); // End of today to allow current day submissions
-    const futureDate = dates.find(date => new Date(date) > today);
+    const todayStr = today.toISOString().split('T')[0]; // Get YYYY-MM-DD format in UTC
+    const futureDate = dates.find(date => date > todayStr);
     if (futureDate) {
       throw new Error(`Future date detected: ${futureDate}. Please check your data.`);
     }
